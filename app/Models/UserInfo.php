@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\User;
 class UserInfo extends Model
 {
     protected $fillable = [
@@ -15,6 +15,7 @@ class UserInfo extends Model
     
     public function user() {
 
-        return $this->belongsTo(UserInfo::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
+
     }
 }
