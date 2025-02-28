@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_list_items', function (Blueprint $table) {
+        Schema::create('scoreboards', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('list_id');
+            $table->unsignedBigInteger('user_id')->unique();
+            $table->unsignedSmallInteger('score')->default(0);
             $table->timestamps();
+            $table->index('score');
 
-            $table->unique(['user_id', 'list_id']);
-            $table->foreign('list_id')->references('id')->on('users_lists')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_list_items');
+        Schema::dropIfExists('scoreboards');
     }
 };

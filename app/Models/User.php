@@ -54,13 +54,22 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+        public function scoreSelectSomeUserData($query){
+            return $query->select('user.id', 'first_name', 'last_name', 'gender', 'email', 'image');
+        }
+
+
 
     public function Userinfo() {
-
         return $this->hasOne(UserInfo::class, 'user_id', 'id');
     }
 
     public function lists(){
         return $this->belongsToMany(UserList::class, 'user_list_items', 'user_id', 'list_id')->withTimestamps();
+    }
+
+    public function scoreOnScoreboard(){
+
+        $this->hasOne(Scoreboard::class, 'user_id');
     }
 }
