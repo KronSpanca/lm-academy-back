@@ -54,8 +54,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-        public function scoreSelectSomeUserData($query){
-            return $query->select('user.id', 'first_name', 'last_name', 'gender', 'email', 'image');
+        public function scoreSelectUserName($query){
+            return $query->select('user.id', 'first_name', 'last_name');
         }
 
 
@@ -70,6 +70,19 @@ class User extends Authenticatable
 
     public function scoreOnScoreboard(){
 
-        $this->hasOne(Scoreboard::class, 'user_id');
+       return $this->hasOne(Scoreboard::class, 'user_id');
     }
+
+    //--Pjesa e Kursit--//
+    
+    public function createdCourses(){
+        return $this->hasMany(Course::class, 'created_by');
+
+    }
+    public function updatedCourses(){
+        return $this->hasMany(Course::class, 'updated_by');
+
+    }
+
+
 }

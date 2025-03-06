@@ -11,14 +11,21 @@ use Database\Seeders\UserListSeeder;
 
 class DatabaseSeeder extends Seeder
 {
+
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
+        // Clear existing data to avoid unique constraint violations
+        User::truncate();
+        
         $this->call([
             UserSeeder::class,
-            UserListSeeder::class,
+            UserListSeeder::class, 
+            CourseSeeder::class
         ]);
     }
+
 }
+

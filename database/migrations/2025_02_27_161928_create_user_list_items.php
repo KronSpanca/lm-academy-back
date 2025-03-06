@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('user_list_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('list_id');
+            $table->unsignedBigInteger('list_id'); 
             $table->timestamps();
 
             $table->unique(['user_id', 'list_id']);
-            $table->foreign('list_id')->references('id')->on('users_lists')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('list_id')->references('id')->on('user_lists')->onDelete('cascade'); // Fixed table name from users_lists to user_lists
         });
     }
 
@@ -31,3 +31,5 @@ return new class extends Migration
         Schema::dropIfExists('user_list_items');
     }
 };
+
+
