@@ -83,6 +83,12 @@ class User extends Authenticatable
         return $this->hasMany(Course::class, 'updated_by');
 
     }
+    public function createdCourseMaterials(){
+        return $this->hasMany(CourseMaterial::class, 'created_by');
+    }
 
+    public function updatedCourseMaterials(){
+        return $this->hasMany(CourseMaterial::class, 'updated_by');
+    }
 
 }

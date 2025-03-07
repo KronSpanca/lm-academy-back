@@ -18,10 +18,14 @@ class Course extends Model
         'updated_by'
     ];
 
-    public function cratedBy(){
-        return $this->belongsTo(User::class, 'created_by')->scoreSelectUserName();
+    public function createdBy(){
+        return $this->belongsTo(User::class, 'created_by')->SelectUserName();
     }
     public function updatedBy(){
-        return $this->belongsTo(User::class, 'updated_by')->scoreSelectUserName();
+        return $this->belongsTo(User::class, 'updated_by')->SelectUserName();
+    }
+
+    public function modules() {
+        return $this->hasMany(CourseModule::class, 'course_id');
     }
 }
