@@ -22,15 +22,14 @@ return new class extends Migration
             $table->json('completed_module_ids')->nullable();
             $table->tinyInteger('pending_modules')->nullable();
             $table->boolean('awarded')->default(false);
+            $table->timestamps();
+
+            $table->unique(['user_id', 'course_id']);
 
             
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
-
-
-
-
-            $table->timestamps();
+        
         });
     }
 
