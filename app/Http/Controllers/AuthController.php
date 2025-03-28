@@ -6,11 +6,22 @@ use Validator;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
-
-
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    protected $user;
+
+    /**
+     * Create a new AuthController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->user = auth()->user();
+    }
+
     /**
      * Get a JWT via given credentials.
      *
@@ -18,9 +29,8 @@ class AuthController extends Controller
      */
     public function login()
     {
-        
         $credentials = request(['email', 'password']);
-      
+
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
@@ -35,14 +45,13 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        //return $request->all();
         try {
             $validator = Validator::make($request->all(), [
                 'first_name' => 'required|string|between:2,255',
                 'last_name'  => 'required|string|between:2,255',
                 'email'      => 'required|string|email|max:100|unique:users',
                 'password'   => 'required|string|min:6',
-                'confirm_password'   => 'required|string|same:password',
+                'confirm_password' => 'required|string|same:password',
                 'image'      => 'sometimes|string',
                 'gender'     => 'required|string',
                 'date_of_birth' => 'nullable|date',
@@ -55,19 +64,13 @@ class AuthController extends Controller
 
             $user = User::create(array_merge(
                 $validator->validated(),
-                ['password'=> bcrypt($request->password)]
+                ['password' => bcrypt($request->password)]
             ));
-            
-
-            // Log in the newly created user and generate a token
-          
 
             return response()->json([
                 'message' => 'User successfully registered',
                 'user'    => $user,
-                
             ], 201);
-            
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -80,7 +83,7 @@ class AuthController extends Controller
      */
     public function userProfile()
     {
-        return response()->json(auth()->user()); // Returns the authenticated user
+        return response()->json(auth()->user());
     }
 
     /**
@@ -91,14 +94,14 @@ class AuthController extends Controller
     public function logout()
     {
         try {
-        $token = JWTAuth::getToken();
-        JWTAuth::invalidate($token);
-        auth()->logout();
-        return response()->json(['message' => 'Succesfully logged out']);
-    } catch (\Exeption $e) {
-        return response()->json(['error' => $e->getMessage()], 500); 
+            $token = JWTAuth::getToken();
+            JWTAuth::invalidate($token);
+
+            return response()->json(['message' => 'Successfully logged out']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
-}
 
     /**
      * Refresh a token.
@@ -107,25 +110,24 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-      try {
-            $oldToken = JWTAuth::getToken(); //token i skadum ose i paskadum
+        try {
+            $oldToken = JWTAuth::getToken();
             $newToken = auth()->refresh();
 
-            if($oldToken){
-                 try {
+            if ($oldToken) {
+                try {
                     JWTAuth::invalidate($oldToken);
-                 } catch (\Exeption $e) {
-                    \Log::warning("Tokencould not be invalidated");
-                 }
+                } catch (\Exception $e) {
+                    \Log::warning("Token could not be invalidated");
+                }
             }
+
             return $this->respondWithToken($newToken);
-      } catch (\Exeption $e) {
-        return response()->json(['error' => 'Could not refresh token ', "message" => $e->getMessage()], 401);
-      }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Could not refresh token', "message" => $e->getMessage()], 401);
+        }
     }
 
-
-    
     /**
      * Get the token array structure.
      *
@@ -141,4 +143,18 @@ class AuthController extends Controller
             'expires_in'   => auth()->factory()->getTTL() * 60,
         ]);
     }
-} 
+
+    /**
+     * Send a registration invite.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendRegistrationInvite(Request $request)
+    {
+        return response()->json([
+            'message'  => 'Inside method',
+            'AuthUser' => $this->user ? $this->user->load(['permissions', 'roles']) : null
+        ]);
+    }
+}
