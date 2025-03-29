@@ -20,7 +20,7 @@ class PermissionSeeder extends Seeder
             ],
             [
                 'name' => 'revoke_permissions',
-               // 'description' => 'Can revoke permissions',
+                //'description' => 'Can revoke permissions',
             ],
             [
                 'name' => 'enable_account',
@@ -32,7 +32,7 @@ class PermissionSeeder extends Seeder
             ],
             [
                 'name' => 'create_course',
-               // 'description' => 'Can create a new course',
+                //'description' => 'Can create a new course',
             ],
             [
                 'name' => 'edit_course_materials',
@@ -40,7 +40,7 @@ class PermissionSeeder extends Seeder
             ],
             [
                 'name' => 'view_course_materials',
-               // 'description' => 'Can view materials in a course',
+                //'description' => 'Can view materials in a course',
             ],
         ];
 
@@ -49,4 +49,4 @@ class PermissionSeeder extends Seeder
             Permission::create($permission);
         }
     }
-} 
+}
