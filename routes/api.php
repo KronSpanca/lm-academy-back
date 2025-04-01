@@ -1,6 +1,8 @@
 <?php
 
+use App\Mail\TestMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
@@ -21,3 +23,31 @@ Route::controller(AuthController::class)->prefix("auth")->group(function () {
 //Route::get('test-api-endpoint', function(){
   //return response()->json(['message' => 'Api endpoint is working']);
 //});
+
+Route::post('test-mail-sent', function(Resquest $resquest){
+  try {
+    $mailData = [
+      'title' => 'Email Title', 
+      'message' => 'This is a test e-mail directed to only students of Lutfi Musiqi High School.',
+      'session_title' => $resquest->session_title
+    ];
+
+    $cc_users = [];
+
+
+    Mail::to('kronspanca61@gmail.com')->send(new TestMail($mailData));
+
+
+    return response()->json('success');
+  } catch (\Exception $e) {
+    return response()->json([
+        'success' => false,
+        'error' => [
+          'code' => $e->getCode(),
+          'message' => $e->getMessage(),
+          'type' => class_basename($e)
+        ]
+    ], 500);
+}
+
+});
