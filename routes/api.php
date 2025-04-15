@@ -2,6 +2,7 @@
 
 use App\Mail\TestMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -24,18 +25,18 @@ Route::controller(AuthController::class)->prefix("auth")->group(function () {
   //return response()->json(['message' => 'Api endpoint is working']);
 //});
 
-Route::post('test-mail-sent', function(Resquest $resquest){
+Route::post('test-mail-sent', function(Request $request){
   try {
     $mailData = [
       'title' => 'Email Title', 
       'message' => 'This is a test e-mail directed to only students of Lutfi Musiqi High School.',
-      'session_title' => $resquest->session_title
+      'session_title' => $request->session_title
     ];
 
     $cc_users = [];
 
 
-    Mail::to('kronspanca61@gmail.com')->send(new TestMail($mailData));
+    Mail::to('bleonnasufi9@gmail.com')->send(new TestMail($mailData));
 
 
     return response()->json('success');
@@ -51,3 +52,40 @@ Route::post('test-mail-sent', function(Resquest $resquest){
 }
 
 });
+
+  Route::get('zen-qoute', function()  {
+    $reponse = Http::get("https://zenquotes.io/api/random");
+
+    try {
+    
+      if($reponse->successful()){
+
+        $quote =$reponse->json()[0];
+  
+        return response()->json([
+          'success' => true,
+          'quote' =>[
+               'text' => quote['q'],
+            'author' => quote['a'],
+  
+         ]
+        ]);
+      }
+      return response()->json([
+        'success' => false,
+        'message' => 'Failed to fetch quote from external API'
+      ]);
+    } catch (\Exeption $e) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Failed to fetch quote from external API',
+        'error'  =>   [
+          'message' => 'Failed to fetch quote',
+          'details' => $e->getMessage()
+        ]
+      ]);
+    }
+  });
+
+
+

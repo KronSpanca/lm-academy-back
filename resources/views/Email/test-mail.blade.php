@@ -12,11 +12,11 @@
     <main>
         <section>
             <h1>Welcome to our Website: {{ config('app.name')}}</h1>
-            <h2>{{ $data('title')}}</h2>
-            <h2>{{ $data('message')}}</h2>
+            <h2>{{ $data['title']}}</h2>
+            <h2>{{ $data['message']}}</h2>
             <h2>This is a test e-mail.</h2>
             <p style="color:blue;">Please do not replay.</p>
-            <h2>{{ $data('session_title')}}</h2>
+            <h2>{{ $data['session_title']}}</h2>
 
         </section>
     </main>
