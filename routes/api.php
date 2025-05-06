@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
-Route::controller(AuthController::class)->prefix("auth")->group(function () {
+Route::controller(AuthController::class)->prefix("auth")->middleware('api')->group(function () {
     Route::post('login', 'login')->name('auth.login');
     Route::post('register', 'register')->name('auth.register');
     Route::post('refresh', 'refresh')->name('auth.refresh');
@@ -53,39 +53,34 @@ Route::post('test-mail-sent', function(Request $request){
 
 });
 
-  Route::get('zen-qoute', function()  {
-    $reponse = Http::get("https://zenquotes.io/api/random");
+Route::get('zen-quotes', function() {  // Fixed spelling from 'zen-qoute' to 'zen-quotes'
+  $response = Http::get("https://zenquotes.io/api/random");  // Fixed variable name typo 'reponse' to 'response'
 
-    try {
-    
-      if($reponse->successful()){
-
-        $quote =$reponse->json()[0];
+  try {
+      if ($response->successful()) {
+          $quote = $response->json()[0];
   
-        return response()->json([
-          'success' => true,
-          'quote' =>[
-               'text' => quote['q'],
-            'author' => quote['a'],
-  
-         ]
-        ]);
+          return response()->json([
+              'success' => true,
+              'quote' => [
+                  'text' => $quote['q'],     // Fixed: Added $ to make it a variable reference
+                  'author' => $quote['a'],    // Fixed: Added $ to make it a variable reference
+              ]
+          ]);
       }
+      
       return response()->json([
-        'success' => false,
-        'message' => 'Failed to fetch quote from external API'
+          'success' => false,
+          'message' => 'Failed to fetch quote from external API'
       ]);
-    } catch (\Exeption $e) {
+  } catch (\Exception $e) {  // Fixed spelling from \Exeption to \Exception
       return response()->json([
-        'success' => false,
-        'message' => 'Failed to fetch quote from external API',
-        'error'  =>   [
-          'message' => 'Failed to fetch quote',
-          'details' => $e->getMessage()
-        ]
-      ]);
-    }
-  });
-
-
-
+          'success' => false,
+          'message' => 'Failed to fetch quote from external API',
+          'error' => [
+              'message' => 'Failed to fetch quote',
+              'details' => $e->getMessage()
+          ]
+      ], 500);  // Added proper error status code
+  }
+});
