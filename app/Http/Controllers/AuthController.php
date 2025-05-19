@@ -32,7 +32,7 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Unauthorized', 'message' => "Your email or password is invalid"], 401);
         }
 
         return $this->respondWithToken($token);
@@ -84,7 +84,12 @@ class AuthController extends Controller
      */
     public function userProfile()
     {
-        return response()->json(auth()->user());
+        $user_id = auth()->id();
+        $user = User::whereId($user_id)->with("roles")->first();
+        return response()->json([
+            "user" => $user
+        ]);
+        //return response()->json(auth()->user());
     }
 
     /**
@@ -140,11 +145,14 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $user_id = auth()->id();
+        $user = User::whereId($user_id)->with("roles")->first();
+        
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
+            'user' => $user
         ]);
     }
 
